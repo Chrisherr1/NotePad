@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/stylesheets/login.css">
+    <script src="/javascripts/login.js" defer></script>
+    <title>Final Project : NotePad</title>
+</head>
+
+<body>
+    <!-- Container for Login and Signup Forms -->
+    <div class="container">
+        <h1>NotePad</h1>
+
+        <!-- Login option(default)-->
+        <div id="loginForm" class="form-container active">
+            <input type="email" placeholder="Email">
+            <input type="password" placeholder="Password">
+            <button class="btn-primary">Login</button>
+
+            <div class="divider">OR</div>
+
+            <button class="btn-oauth">Continue with OAuth 2.0</button>
+            <div class="toggle">
+                <a href="#" id="showSignup">Create account</a>
+            </div>
+        </div>
+
+        <!-- Signup option (when create account is pressed) -->
+        <div id="signupForm" class="form-container">
+            <input type="text" placeholder="Name">
+            <input type="email" placeholder="Email">
+            <input type="password" placeholder="Password">
+            <button class="btn-primary">Create Account</button>
+
+            <div class="divider">OR</div>
+
+            <button class="btn-oauth">Sign up with OAuth 2.0</button>
+            <div class="toggle">
+                <a href="#" id="showLogin">Back to login</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

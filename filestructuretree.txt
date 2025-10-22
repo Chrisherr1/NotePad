@@ -1,0 +1,41 @@
+// needed a reference to know where each file needed to be 
+
+notes-app/
+├── server.js                 # Main Express server file
+├── package.json
+├── .env                      # Environment variables (CLIENT_ID, CLIENT_SECRET, etc.)
+├── .gitignore
+│
+├── config/
+│   ├── database.js          # MySQL connection configuration
+│   └── passport.js          # Passport OAuth strategy configuration
+│
+├── routes/
+│   ├── auth.js              # Authentication routes (/auth/google, /auth/google/callback)
+│   ├── notes.js             # Notes CRUD routes (protected)
+│   └── index.js             # Main routes
+│
+├── middleware/
+│   └── auth.js              # Authentication middleware (isAuthenticated)
+│
+├── models/
+│   ├── User.js              # User model/queries
+│   └── Note.js              # Note model/queries
+│
+├── public/                   # Static files served by Express
+│   ├── css/
+│   │   ├── login.css        # Login page styles
+│   │   ├── dashboard.css    # Dashboard/notes page styles
+│   │   └── common.css       # Shared styles
+│   │
+│   ├── js/
+│   │   ├── login.js         # Login page client-side JS
+│   │   ├── dashboard.js     # Dashboard client-side JS
+│   │   └── notes.js         # Notes functionality JS
+│   │
+│   └── images/              # Static images, logos, etc.
+│
+└── views/                    # HTML files (or templates if using EJS/Pug)
+    ├── login.html           # Landing/login page
+    ├── dashboard.html       # Main notes dashboard
+    
