@@ -1,18 +1,21 @@
+require('dotenv').config(); // Load environment variables from .env file
+
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+
+//passport setup
+var passport = require('passport');
+var GoogleStrategy = require('passport-google-oidc').Strategy;
+var db = require('./config/db');  // Adjust path if your db file is elsewhere
+//end of passport setup
+
 //session store setup
 var session = require('express-session');
 var MySQLStore = require('express-mysql-session')(session);
 //end of session store setup
-
-//importing routes
-var authRouter = require('./routes/auth');
-var usersRouter = require('./routes/users');
-
-//end of importing routes
 
 //initializing express app
 var app = express();
@@ -29,24 +32,81 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //engine setup for sessions google OAuth
 var sessionStore = new MySQLStore({
-  host: 'localhost',
+  host: process.env.MYSQL_HOST || 'localhost',
   port: 3306,
-  user: 'your_mysql_us',      // Change to your MySQL username
-  password: 'your_mysql_password',  // Change to your MySQL password
-  database: 'your_database_name'    // Change to your database name
+  user: process.env.MYSQL_USER || 'root',
+  password: process.env.MYSQL_PASSWORD || '0922',
+  database: process.env.MYSQL_DATABASE || '424notes_app'
 });
-//engine setup for sessions google OAuth
+
 app.use(session({
   secret: 'keyboard cat',
   resave: false,
   saveUninitialized: false,
   store: sessionStore
 }));
-//end of engine setup
+
+// Initialize Passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+//configure passport google strategy
+passport.use(new GoogleStrategy({
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: '/oauth2/redirect/google',
+  scope: ['profile']
+}, function verify(issuer, profile, cb) {
+  db.query('SELECT * FROM federated_credentials WHERE provider = ? AND subject = ?', [issuer, profile.id])
+    .then(([rows]) => {
+      if (rows.length === 0) {
+        return db.query('INSERT INTO users (name) VALUES (?)', [profile.displayName])
+          .then(([result]) => {
+            var id = result.insertId;
+            return db.query('INSERT INTO federated_credentials (user_id, provider, subject) VALUES (?, ?, ?)', [id, issuer, profile.id])
+              .then(() => {
+                var user = {
+                  id: id,
+                  name: profile.displayName
+                };
+                return cb(null, user);
+              });
+          });
+      } else {
+        var row = rows[0];
+        return db.query('SELECT * FROM users WHERE id = ?', [row.user_id])
+          .then(([userRows]) => {
+            if (userRows.length === 0) {
+              return cb(null, false);
+            }
+            return cb(null, userRows[0]);
+          });
+      }
+    })
+    .catch(err => {
+      return cb(err);
+    });
+}));
+
+// Passport serialization
+passport.serializeUser(function(user, cb) {
+  process.nextTick(function() {
+    cb(null, { id: user.id, name: user.name });
+  });
+});
+
+passport.deserializeUser(function(user, cb) {
+  process.nextTick(function() {
+    return cb(null, user);
+  });
+});
+
+//importing routes (AFTER passport is configured)
+var authRouter = require('./routes/auth');
+//end of importing routes
 
 //mounting routes
 app.use('/', authRouter);
-app.use('/', usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -58,7 +118,6 @@ app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
   // render the error page
   res.status(err.status || 500);
   res.render('error');

@@ -1,7 +1,5 @@
 import mysql from 'mysql2'
-
-import dotenv from 'dotenv'
-dotenv.config()
+import dotenv from 'dotenv/config'
 
 const pool = mysql.createPool({
     host: process.env.MYSQL_HOST,
@@ -10,6 +8,7 @@ const pool = mysql.createPool({
     database: process.env.MYSQL_DATABASE
 }).promise();
 
+export default pool;
 /*
 // get list of Users
 export async function getUsers() {

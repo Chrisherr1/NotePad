@@ -10,6 +10,7 @@
     "connect-mysql2": "^2.2.6",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
+    "dotenv": "^17.2.3",
     "ejs": "^3.1.10",
     "express": "~4.16.1",
     "express-mysql-session": "^3.0.3",
