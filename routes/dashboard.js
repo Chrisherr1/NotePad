@@ -1,3 +1,17 @@
-router.get('/dashboard', function(req, res, next) {
-  res.render('dashboard');  // You'll need to create views/dashboard.ejs
+var express = require('express');
+var router = express.Router();
+
+// Middleware to check authentication
+function isAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect('/');
+}
+
+// Dashboard home page (this becomes /dashboard when mounted)
+router.get('/', isAuthenticated, function(req, res, next) {
+  res.render('dashboard', { user: req.user });
 });
+
+module.exports = router;

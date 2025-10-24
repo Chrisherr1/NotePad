@@ -1,6 +1,9 @@
+// routes/auth.js
+// Importing express
 var express = require('express');
+// Importing passport
 var passport = require('passport');
-
+// Creating router
 var router = express.Router();
 
 // rendering the login page
@@ -16,10 +19,17 @@ router.get('/oauth2/redirect/google', passport.authenticate('google', {
   successRedirect: '/dashboard',
   failureRedirect: '/'
 }));
+// logout route
+router.post('/logout', function(req, res, next) {
+  req.logout(function(err) {
+    if (err) { return next(err); }
+    res.redirect('/');
+  });
+});
 
 // dashboard route
-router.get('/dashboard', function(req, res, next) {
-  res.send('Welcome to the dashboard!');
-});
+//router.get('/dashboard', function(req, res, next) {
+  //res.send('Welcome to the dashboard!');
+//});
 
 module.exports = router;
