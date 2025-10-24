@@ -1,5 +1,5 @@
-import mysql from 'mysql2'
-import dotenv from 'dotenv/config'
+require('dotenv').config();
+const mysql = require('mysql2');
 
 const pool = mysql.createPool({
     host: process.env.MYSQL_HOST,
@@ -8,65 +8,47 @@ const pool = mysql.createPool({
     database: process.env.MYSQL_DATABASE
 }).promise();
 
-export default pool;
-/*
-// get list of Users
-export async function getUsers() {
-    const [rows] = await pool.query("SELECT * FROM users")
-    return rows
-}
-
-// get information of one user
-export async function getUser(id) {
-    const [rows] = await pool.query(`
-        SELECT *
-        FROM users
-        WHERE user_id = ? 
-        `, [id])
-    return rows[0]
-}
-*/
+module.exports = pool;
 
 // get notes of user
-export async function getUserNotes(id) {
+async function getUserNotes(id) {
     const [rows] = await pool.query(`
         SELECT note_id, note
         FROM users u, notes n
         WHERE u.user_id = ?
             AND u.user_id = n.user_id`, [id])
-    return rows
+    return rows;
 }
 
 // create a note 
-export async function createNote(note, id) {
+async function createNote(note, id) {
     const result = await pool.query(`
         INSERT INTO notes (note, user_id)
         VALUES (?, ?)
         `, [note, id])
-
     return result;
 } 
 
 // update a note
-export async function updateNote(note, id) {
+async function updateNote(note, id) {
     const result = await pool.query(`
         UPDATE notes
         SET note = ?
         WHERE note_id = ? 
         `, [note, id])
-    
     return result;
 }
 
 // delete a note
-export async function deleteNote(id) {
+async function deleteNote(id) {
     const result = await pool.query(`
         DELETE FROM notes
         WHERE note_id = ?
         `, [id])
 }
 
-/*
-const result = await getUserNotes(1)
-console.log(result)
-*/
+// Export the functions if you need them
+module.exports.getUserNotes = getUserNotes;
+module.exports.createNote = createNote;
+module.exports.updateNote = updateNote;
+module.exports.deleteNote = deleteNote;

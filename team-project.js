@@ -1,4 +1,5 @@
-require('dotenv').config(); // Load environment variables from .env file
+require('dotenv').config(); 
+// Load environment variables from .env file
 
 var createError = require('http-errors');
 var express = require('express');
@@ -19,6 +20,7 @@ var MySQLStore = require('express-mysql-session')(session);
 
 //initializing express app
 var app = express();
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -60,21 +62,23 @@ passport.use(new GoogleStrategy({
   db.query('SELECT * FROM federated_credentials WHERE provider = ? AND subject = ?', [issuer, profile.id])
     .then(([rows]) => {
       if (rows.length === 0) {
+        // New user - create user and federated credential
         return db.query('INSERT INTO users (name) VALUES (?)', [profile.displayName])
           .then(([result]) => {
-            var id = result.insertId;
-            return db.query('INSERT INTO federated_credentials (user_id, provider, subject) VALUES (?, ?, ?)', [id, issuer, profile.id])
+            var userId = result.insertId;
+            return db.query('INSERT INTO federated_credentials (user_id, provider, subject) VALUES (?, ?, ?)', [userId, issuer, profile.id])
               .then(() => {
                 var user = {
-                  id: id,
+                  user_id: userId,  // Changed from id to user_id
                   name: profile.displayName
                 };
                 return cb(null, user);
               });
           });
       } else {
+        // Existing user - fetch user data
         var row = rows[0];
-        return db.query('SELECT * FROM users WHERE id = ?', [row.user_id])
+        return db.query('SELECT * FROM users WHERE user_id = ?', [row.user_id])  // Changed from id to user_id
           .then(([userRows]) => {
             if (userRows.length === 0) {
               return cb(null, false);
@@ -91,7 +95,7 @@ passport.use(new GoogleStrategy({
 // Passport serialization
 passport.serializeUser(function(user, cb) {
   process.nextTick(function() {
-    cb(null, { id: user.id, name: user.name });
+    cb(null, { user_id: user.user_id, name: user.name });  // Changed from id to user_id
   });
 });
 
@@ -103,10 +107,12 @@ passport.deserializeUser(function(user, cb) {
 
 //importing routes (AFTER passport is configured)
 var authRouter = require('./routes/auth');
+var dashboardRouter = require('./routes/dashboard');
 //end of importing routes
 
 //mounting routes
 app.use('/', authRouter);
+app.use('/dashboard', dashboardRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
