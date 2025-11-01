@@ -1,3 +1,5 @@
+// handles backend GET, POST, PUT, & DELETE requests
+
 // import modules
 const express = require('express')
 const router = express.Router()
@@ -16,20 +18,19 @@ router.use(isAuthenticated)
 // gets user notes
 router.get("/notes", async (req, res) => {
     try {
-        const id = req.params.id 
+        const id = req.user.user_id
         const notes = await db.getUserNotes(id) 
         res.send(notes)
     } catch (error) {
-        console.error('Could not fetch notes:', error)
-        res.status(500)
+        res.status(500).send({ error: 'Could not fetch notes'})
     }
 })
 
 // allows user to add a note
-router.post("/", async (req, res) => {
+router.post("/notes", async (req, res) => {
     try {
-        const { title, content, category, id } = req.body
-        const note = await db.createNote(title, content, category, id)
+        const { title, content, category, user_id } = req.body
+        const note = await db.createNote(title, content, category, user_id)
         res.status(201).send(note)
     } catch (error) {
         console.error('Could not create note:', error)
@@ -41,8 +42,8 @@ router.post("/", async (req, res) => {
 router.put("/notes/:id", async (req, res) => {
     try {
         const id = req.params.id
-        const { note } = req.body
-        const notes = await db.updateNote(note, id)
+        const { title, content, category } = req.body
+        const note = await db.updateNote(title, content, category, id)
         res.status(201).send(notes)
     } catch (error) {
         console.error('Could not update note:', error)
@@ -53,7 +54,10 @@ router.put("/notes/:id", async (req, res) => {
 // allows user to delete a note 
 router.delete("/notes/:id", async (req, res) => {
     try {
-        const id = req.params.id
+        console.log('Raw req.params:', req.params)
+        console.log("Params being passed:", req.params.id)
+        console.log('Type:', typeof req.params.id)
+        const id = parseInt(req.params.id)
         const result = await db.deleteNote(id)
         res.status(201).send(result)
     } catch (error) {

@@ -114,7 +114,7 @@ var notesRouter = require('./routes/notes');
 //mounting routes
 app.use('/', authRouter);
 app.use('/dashboard', dashboardRouter);
-app.use('/notes', notesRouter);
+app.use('/', notesRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
