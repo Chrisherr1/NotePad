@@ -1,3 +1,5 @@
+// handles SQL logic for GET, POST, PUT, & DELETE
+
 require('dotenv').config();
 const mysql = require('mysql2');
 
@@ -13,11 +15,11 @@ module.exports = pool;
 // get notes of user
 async function getUserNotes(id) {
     const [rows] = await pool.query(`
-        SELECT note_id, note
+        SELECT n.title, n.content, n.category
         FROM users u, notes n
         WHERE u.user_id = ?
             AND u.user_id = n.user_id`, [id])
-    return rows;
+    return rows
 }
 
 // create a note 
@@ -30,13 +32,15 @@ async function createNote(title, content, category, id) {
 } 
 
 // update a note
-async function updateNote(note, id) {
+async function updateNote(title, content, category, id) {
     const result = await pool.query(`
         UPDATE notes
-        SET note = ?
+        SET title = ?
+            content = ?
+            category = ?
         WHERE note_id = ? 
-        `, [note, id])
-    return result;
+        `, [title, content, category, id])
+    return result
 }
 
 // delete a note
@@ -45,6 +49,7 @@ async function deleteNote(id) {
         DELETE FROM notes
         WHERE note_id = ?
         `, [id])
+    return result
 }
 
 // Export the functions if you need them
