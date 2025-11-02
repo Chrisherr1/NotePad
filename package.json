@@ -3,14 +3,14 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "devStart" : "nodemon team-project.js"
   },
   "dependencies": {
     "connect-mysql": "^4.0.0",
     "connect-mysql2": "^2.2.6",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
-    "dotenv": "^17.2.3",
     "ejs": "^3.1.10",
     "express": "~4.16.1",
     "express-mysql-session": "^3.0.3",
@@ -23,5 +23,9 @@
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-google-oidc": "^0.1.0"
+  },
+  "devDependencies": {
+    "dotenv": "^17.2.3",
+    "nodemon": "^3.1.10"
   }
 }

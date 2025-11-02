@@ -21,11 +21,13 @@ var MySQLStore = require('express-mysql-session')(session);
 //initializing express app
 var app = express();
 
-
 // view engine setup
+// tells express what template engine we are using(html,ejs,pug) and where the template files are located
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
+// end of view engine setup
 
+//middleware setup
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
