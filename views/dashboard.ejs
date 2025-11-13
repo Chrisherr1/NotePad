@@ -67,13 +67,14 @@
 
             <div class="sidebar-footer">
                 <div class="user-info">
-                    <div class="user-avatar">U</div>
-                    <div class="user-name">User</div>
+                    <div class="user-avatar">
+                    <%= user.name.charAt(0) %>
+                    </div>
+                    <div class="user-name"> <%= user.name.split(' ')[0] %> </div>
                 </div>
                 <form action="/logout" method="POST" style ="display: inline;">
                     <button class="logout-btn" type="submit">Logout</button>
                 </form>
-                
             </div>
         </div>
 
