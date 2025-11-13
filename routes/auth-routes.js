@@ -12,7 +12,8 @@ router.get('/', (req, res) => {
 
 // route for Google OAuth 2.0 authentication
 router.get('/google', passport.authenticate('google', {
-  scope: ['profile']
+  scope: ['profile','email'],
+  prompt:'select_account'
 }));
 
 // callback route after Google authentication

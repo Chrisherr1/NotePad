@@ -1,3 +1,49 @@
+# Environment files
 .env
-localhost+2-key.pem
-localhost+2.pem
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# SSL certificates / private keys
+*.pem
+*.key
+*.crt
+
+#  Node dependencies
+node_modules/
+
+# Build artifacts (if you ever bundle or transpile)
+dist/
+build/
+
+#  Logs and runtime data
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+pids/
+*.pid
+*.pid.lock
+
+# Database dumps or local data
+*.sql
+*.sqlite
+*.sqlite3
+
+# Editor and OS junk
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Optional local assets
+uploads/
+tmp/
+.cache/
+
+# 📁 Session stores (if using file-based session store)
+sessions/

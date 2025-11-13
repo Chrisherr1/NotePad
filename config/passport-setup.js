@@ -65,5 +65,11 @@ passport.use(new GoogleStrategy({
       return done(err);
     });
 }));
+// logic for forcing user to choose account after logout
+GoogleStrategy.prototype.authorizationParams = function (options) {
+  return {
+    prompt: 'select_account'
+  };
+};
 
 module.exports = passport;
