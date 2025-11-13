@@ -1,6 +1,10 @@
         body {
             font-family: Arial, sans-serif;
-            background: #2C3E50;
+            /*background:#2C3E50;*/
+            background-image: url(../images/login-background3.jpg);
+            background-size:cover;
+            background-position: center;
+            background-repeat: no-repeat;
             display: flex;
             justify-content: center;
             align-items: center;
