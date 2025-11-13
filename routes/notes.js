@@ -4,20 +4,22 @@
 const express = require('express')
 const router = express.Router()
 const db = require('../config/db')
+const { csrfSynchronisedProtection } = require('../middleware/csrf');
+
 
 // Middleware to check authentication
 function isAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
+    if (req.isAuthenticated()) {
     return next();
-  }
-  res.redirect('/');
+    }
+    res.redirect('/');
 }
 
 router.use(isAuthenticated)
 
 // gets user notes
 router.get("/notes", async (req, res) => {
-    try {
+    try {   
         const id = req.user.user_id
         const notes = await db.getUserNotes(id) 
         res.send(notes)
@@ -27,7 +29,7 @@ router.get("/notes", async (req, res) => {
 })
 
 // allows user to add a note
-router.post("/notes", async (req, res) => {
+router.post("/notes",csrfSynchronisedProtection, async (req, res) => {
     try {
         const { title, content, category, date, user_id } = req.body
         const note = await db.createNote(title, content, category, date, req.user.user_id)
@@ -40,7 +42,7 @@ router.post("/notes", async (req, res) => {
 })
 
 // allows user to update note
-router.put("/notes/:id", async (req, res) => {
+router.put("/notes/:id",csrfSynchronisedProtection, async (req, res) => {
     try {
         const id = req.params.id
         const { title, content, category } = req.body
@@ -53,7 +55,7 @@ router.put("/notes/:id", async (req, res) => {
 })
 
 // allows user to delete a note 
-router.delete("/notes/:id", async (req, res) => {
+router.delete("/notes/:id",csrfSynchronisedProtection, async (req, res) => {
     try {
         const id = parseInt(req.params.id)
         const result = await db.deleteNote(id)

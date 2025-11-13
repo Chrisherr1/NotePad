@@ -5,7 +5,7 @@ require('dotenv').config();
 const createError = require('http-errors');
 const path = require('path');
 const logger = require('morgan');
-const cookieParser = require('cookie-parser');
+
 
 
 const express = require('express');
@@ -18,6 +18,10 @@ const app = express();
 //session store setup
 const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
+
+const { csrfSynchronisedProtection, generateToken } = require('./middleware/csrf');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 
 // view engine setup
 // tells express what template engine we are using(html,ejs,pug) and where the template files are located
@@ -33,14 +37,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //engine setup for sessions google OAuth
 const sessionStore = new MySQLStore({
-  host: process.env.MYSQL_HOST || 'localhost',
+  host: process.env.MYSQL_HOST  || 'localhost',
   port: process.env.PORT || 3306,
   user: process.env.MYSQL_USER || 'root',
   password: process.env.MYSQL_PASSWORD || '0922',
   database: process.env.MYSQL_DATABASE || '424notes_app'
 });
 
-const csrfToken = crypto.randomUUID();
 //session
 app.use(session({
   secret: process.env.COOKIE_SECRET,
@@ -54,6 +57,9 @@ app.use(session({
   maxAge: 1000 * 60 * 30
   }
 }));
+// Configure body-parser middleware to parse request bodies (for POST data)
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 // Initialize Passport
 app.use(passportSetup.initialize());
@@ -63,8 +69,10 @@ app.use(passportSetup.session());
 const authRouter = require('./routes/auth-routes');
 const dashboardRouter = require('./routes/dashboard');
 const notesRouter = require('./routes/notes');
+const csrfRouter = require('./routes/csrf');
 
 //mounting routes
+app.use('/', csrfRouter); // Mount it FIRST
 app.use('/', authRouter);
 app.use('/dashboard', dashboardRouter);
 app.use('/', notesRouter);
@@ -76,6 +84,16 @@ app.use('/', notesRouter);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
+});
+
+// CSRF error handler
+app.use((err, req, res, next) => {
+  if (err.code === 'EBADCSRFTOKEN') {
+    // CSRF token validation failed
+    console.error('CSRF token validation failed');
+    return res.status(403).json({ error: 'Invalid CSRF token' });
+  }
+  next(err);
 });
 
 // error handler
