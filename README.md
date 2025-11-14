@@ -11,4 +11,3 @@
 ![alt text](readme-photos/image.png)
 ![alt text](readme-photos/image-1.png)
 ![alt text](readme-photos/image-2.png)
-![alt text](readme-photos/image-3.png)
