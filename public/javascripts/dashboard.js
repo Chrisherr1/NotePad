@@ -72,7 +72,7 @@
                         <button class="icon-btn pin-btn" data-note-id="${note.note_id}" title="${note.pinned ? 'Unpin' : 'Pin'}">
                             ${note.pinned ? 'Pinned' : 'Pin'}
                         </button>
-                        <button class="icon-btn delete-btn" data-note-id="${note.note_id}" title="Delete" onclick="location.reload()">
+                        <button class="icon-btn delete-btn" data-note-id="${note.note_id}" title="Delete">
                             Delete
                         </button>
                     </div>
@@ -205,6 +205,8 @@
             })
 
             const result = await response.json();
+
+            notes = await getNotes();
         
             updateCounts();
             renderNotes();

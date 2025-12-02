@@ -9,7 +9,7 @@ function isAuthenticated(req, res, next) {
   res.redirect('/');
 }
 
-// Dashboard home page (this becomes /dashboard when mounted)
+// Dashboard home page
 router.get('/', isAuthenticated, function(req, res, next) {
   res.render('dashboard', { user: req.user });
 });

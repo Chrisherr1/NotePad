@@ -1,8 +1,8 @@
 require('dotenv').config();
-
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oidc').Strategy;
 const db = require('./db');
+
 
 // Passport serialization
 passport.serializeUser(function(user, done) {
@@ -10,7 +10,6 @@ passport.serializeUser(function(user, done) {
    done(null, user.user_id);  // Save only the user_id to the session
   });
 }); 
-
 passport.deserializeUser(function(user_id, done) {
   process.nextTick(function() {
     //  Query database to get full user object
@@ -45,6 +44,7 @@ passport.use(new GoogleStrategy({
                 var user = {
                   user_id: userId,  // Changed from id to user_id
                   name: profile.displayName
+                  
                 };
                 return done(null, user);
               });
@@ -71,5 +71,4 @@ GoogleStrategy.prototype.authorizationParams = function (options) {
     prompt: 'select_account'
   };
 };
-
 module.exports = passport;

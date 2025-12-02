@@ -7,6 +7,7 @@
     "devStart": "nodemon team-project.js"
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "connect-mysql": "^4.0.0",
     "connect-mysql2": "^2.2.6",
     "cookie-parser": "~1.4.4",

@@ -54,7 +54,7 @@ router.put("/notes/:id",csrfSynchronisedProtection, async (req, res) => {
     }
 })
 
-// allows user to delete a note 
+// allows user to delete a note
 router.delete("/notes/:id",csrfSynchronisedProtection, async (req, res) => {
     try {
         const id = parseInt(req.params.id)
